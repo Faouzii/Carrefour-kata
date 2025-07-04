@@ -1,0 +1,510 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap');
+
+:root {
+  /* Carrefour Brand Colors */
+  --carrefour-red: #e60028;
+  --carrefour-dark-red: #cc0024;
+  --carrefour-blue: #0066cc;
+  --carrefour-dark-blue: #004499;
+  --carrefour-yellow: #ffcc00;
+  --carrefour-orange: #ff6600;
+  --carrefour-gray: #666666;
+  --carrefour-light-gray: #f5f5f5;
+  --carrefour-white: #ffffff;
+  --carrefour-black: #333333;
+  
+  /* Typography */
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-brand: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+* {
+  font-family: var(--font-primary);
+}
+
+.App {
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--carrefour-light-gray) 0%, #e8e8e8 100%);
+  padding: 0;
+  font-family: var(--font-primary);
+}
+
+.main-container {
+  padding: 2rem 0;
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative;
+  transition: all 0.3s ease-in-out;
+  min-height: calc(100vh - 200px);
+  overflow: hidden;
+}
+
+.content-wrapper {
+  position: relative;
+  display: flex;
+  transition: all 0.3s ease-in-out;
+}
+
+.products-section {
+  flex: 1;
+  transition: all 0.3s ease-in-out;
+  padding-right: 0;
+}
+
+.products-section.with-cart {
+  padding-right: 400px;
+}
+
+.cart-panel {
+  position: fixed;
+  top: 0;
+  right: -400px;
+  width: 400px;
+  height: 100vh;
+  background: linear-gradient(135deg, var(--carrefour-blue) 0%, var(--carrefour-dark-blue) 100%);
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-y: auto;
+  border-radius: 20px 0 0 20px;
+  pointer-events: none;
+  backdrop-filter: blur(10px);
+  opacity: 0;
+  visibility: hidden;
+}
+
+.cart-panel.open {
+  right: 0;
+  pointer-events: auto;
+  opacity: 1;
+  visibility: visible;
+}
+
+.cart-panel-header {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--carrefour-white);
+  padding: 1.5rem;
+  margin: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border-radius: 20px 0 0 0;
+}
+
+.cart-nav-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: var(--carrefour-white);
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease-in-out;
+  backdrop-filter: blur(10px);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cart-nav-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
+  color: var(--carrefour-white);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.cart-nav-btn:active {
+  transform: translateY(0);
+}
+
+.cart-nav-badge {
+  background: var(--carrefour-red);
+  color: var(--carrefour-white);
+  border-radius: 20px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  min-width: 24px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(230, 0, 40, 0.3);
+}
+
+@media (max-width: 768px) {
+  .cart-panel {
+    width: 100%;
+    right: -100%;
+    border-radius: 20px 0 0 20px;
+    top: 0;
+    opacity: 0;
+    visibility: hidden;
+  }
+  
+  .cart-panel.open {
+    right: 0;
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .products-section.with-cart {
+    padding-right: 0;
+  }
+  
+  .cart-nav-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+  
+  .cart-nav-badge {
+    padding: 0.2rem 0.5rem;
+    font-size: 0.75rem;
+  }
+  
+  .carrefour-logo {
+    font-size: 2rem;
+  }
+  
+  .carrefour-slogan {
+    font-size: 1rem;
+  }
+}
+
+/* Carrefour Header Styling */
+.carrefour-header {
+  background: linear-gradient(135deg, var(--carrefour-blue) 0%, var(--carrefour-dark-blue) 100%);
+  color: var(--carrefour-white);
+  padding: 2rem 0;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+}
+
+.carrefour-logo {
+  font-size: 2.5rem;
+  font-weight: 800;
+  font-family: var(--font-brand);
+  margin-bottom: 0.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1rem;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+.carrefour-slogan {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  font-style: italic;
+  font-weight: 300;
+  letter-spacing: 0.01em;
+  text-align: left;
+}
+
+/* Carrefour Button Styling */
+.btn-primary {
+  background-color: var(--carrefour-blue) !important;
+  border-color: var(--carrefour-blue) !important;
+  color: var(--carrefour-white) !important;
+}
+
+.btn-primary:hover {
+  background-color: var(--carrefour-dark-blue) !important;
+  border-color: var(--carrefour-dark-blue) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 102, 204, 0.3);
+}
+
+.btn-success {
+  background-color: var(--carrefour-red) !important;
+  border-color: var(--carrefour-red) !important;
+}
+
+.btn-success:hover {
+  background-color: var(--carrefour-dark-red) !important;
+  border-color: var(--carrefour-dark-red) !important;
+}
+
+/* Carrefour Card Styling */
+.card {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  border: 1px solid #e0e0e0;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(230, 0, 40, 0.15) !important;
+}
+
+.card-header {
+  background: linear-gradient(135deg, var(--carrefour-red) 0%, var(--carrefour-dark-red) 100%) !important;
+  color: var(--carrefour-white) !important;
+  border-bottom: none;
+}
+
+/* Price Styling */
+.text-primary {
+  color: var(--carrefour-red) !important;
+}
+
+/* Badge Styling */
+.badge.bg-success {
+  background-color: var(--carrefour-blue) !important;
+}
+
+.badge.bg-primary {
+  background-color: var(--carrefour-red) !important;
+}
+
+/* Alert Styling */
+.alert-success {
+  background-color: rgba(0, 102, 204, 0.1) !important;
+  border-color: var(--carrefour-blue) !important;
+  color: var(--carrefour-dark-blue) !important;
+}
+
+/* Toast Styling */
+.toast.bg-success {
+  background-color: var(--carrefour-blue) !important;
+}
+
+.toast.bg-danger {
+  background-color: var(--carrefour-red) !important;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--carrefour-light-gray);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--carrefour-red);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--carrefour-dark-red);
+}
+
+/* Button animations */
+.btn {
+  transition: all 0.2s ease-in-out;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+/* Loading animation */
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.pulse {
+  animation: pulse 2s infinite;
+}
+
+/* Modern Toast Styling */
+.toast {
+  animation: slideInRight 0.3s ease-out;
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.toast .toast-header {
+  background: transparent;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 1rem 1.5rem 0.75rem 1.5rem;
+  border-radius: 16px 16px 0 0;
+}
+
+.toast .toast-body {
+  padding: 1rem 1.5rem 1.5rem 1.5rem;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.toast.bg-success {
+  background: rgba(0, 102, 204, 0.95) !important;
+  color: var(--carrefour-white) !important;
+}
+
+.toast.bg-success .toast-header {
+  color: var(--carrefour-white);
+  border-bottom-color: rgba(255, 255, 255, 0.2);
+}
+
+.toast.bg-danger {
+  background: rgba(230, 0, 40, 0.95) !important;
+  color: var(--carrefour-white) !important;
+}
+
+.toast.bg-danger .toast-header {
+  color: var(--carrefour-white);
+  border-bottom-color: rgba(255, 255, 255, 0.2);
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Typography Enhancements */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-brand);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.card-title {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.btn {
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .carrefour-logo {
+    font-size: 2rem;
+  }
+  
+  .carrefour-slogan {
+    font-size: 1rem;
+  }
+  
+  .main-container {
+    padding: 1rem 0;
+  }
+}
+
+@media (max-width: 576px) {
+  .main-container {
+    padding: 0.5rem 0;
+  }
+}
+
+/* Custom focus styles */
+.form-control:focus {
+  border-color: var(--carrefour-red);
+  box-shadow: 0 0 0 0.2rem rgba(230, 0, 40, 0.25);
+}
+
+/* Badge animations */
+.badge {
+  transition: all 0.2s ease-in-out;
+}
+
+.badge:hover {
+  transform: scale(1.05);
+}
+
+/* Carrefour specific styling */
+.carrefour-product-card {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1.5px solid #e6eaf0;
+  transition: all 0.3s ease-in-out;
+  background: #fcfdff;
+  box-shadow: 0 2px 8px rgba(0,102,204,0.04);
+}
+
+.carrefour-product-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 102, 204, 0.15) !important;
+}
+
+.carrefour-product-card .card-body {
+  padding: 1.5rem;
+}
+
+.carrefour-product-card .form-control:focus {
+  border-color: var(--carrefour-blue);
+  box-shadow: 0 0 0 0.2rem rgba(0, 102, 204, 0.25);
+}
+
+.carrefour-product-card .btn {
+  transition: all 0.3s ease-in-out;
+}
+
+.carrefour-product-card .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 102, 204, 0.3);
+}
+
+.carrefour-cart-card {
+  border-radius: 16px;
+  overflow: hidden;
+  border: none;
+  background: var(--carrefour-white);
+}
+
+.carrefour-cart-card .card-header {
+  padding: 1rem 1.5rem;
+}
+
+.carrefour-cart-card .card-body {
+  padding: 1.5rem;
+}
+
+.cart-item {
+  transition: all 0.2s ease-in-out;
+}
+
+.cart-item:hover {
+  background-color: rgba(0, 102, 204, 0.02);
+}
+
+.cart-item .form-control:focus {
+  border-color: var(--carrefour-blue);
+  box-shadow: 0 0 0 0.2rem rgba(0, 102, 204, 0.25);
+}
+
+.cart-item .btn {
+  transition: all 0.2s ease-in-out;
+}
+
+.cart-item .btn:hover {
+  transform: scale(1.05);
+}
+
+/* Carrefour footer styling */
+.carrefour-footer {
+  background: var(--carrefour-black);
+  color: var(--carrefour-white);
+  padding: 2rem 0;
+  margin-top: 3rem;
+}
+
+.carrefour-footer a {
+  color: var(--carrefour-yellow);
+  text-decoration: none;
+}
+
+.carrefour-footer a:hover {
+  color: var(--carrefour-orange);
+}

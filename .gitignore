@@ -1,0 +1,31 @@
+# General
+.DS_Store
+Thumbs.db
+
+# IDEs and editors
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.classpath
+.project
+.settings/
+
+# Logs
+*.log
+
+# Spring Boot backend (Maven)
+discount-mvp-backend/target/
+discount-mvp-backend/.mvn/
+discount-mvp-backend/*.log
+
+# React frontend
+discount-mvp-frontend/node_modules/
+discount-mvp-frontend/build/
+discount-mvp-frontend/dist/
+discount-mvp-frontend/.env*
+
+# OS generated files
+*.swp
+*~ 
