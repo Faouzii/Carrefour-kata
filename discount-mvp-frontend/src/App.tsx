@@ -52,7 +52,7 @@ function App() {
     }
   };
 
-  if (productsLoading || cartLoading) {
+  if (productsLoading) {
     return <LoadingSpinner />;
   }
 

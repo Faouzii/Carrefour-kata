@@ -52,7 +52,7 @@ export const useCart = () => {
     const result = await executeOperation(
       () => cartService.applyDiscount({ discountCode }),
       `Discount code "${discountCode}" applied successfully!`,
-      'Failed to apply discount code'
+      undefined // Let the backend error message come through
     );
     return { success: result.success, message: result.message };
   }, [executeOperation]);

@@ -30,7 +30,10 @@ export const useCartWithToast = (options: UseCartWithToastOptions) => {
 
   const applyDiscountWithToast = useCallback(async (discountCode: string) => {
     const result = await cart.applyDiscount(discountCode);
-    showToast(result.message, result.success ? 'success' : 'danger');
+    // Only show toast for success, not for errors (errors will be displayed inline)
+    if (result.success) {
+      showToast(result.message, 'success');
+    }
     return result;
   }, [cart, showToast]);
 

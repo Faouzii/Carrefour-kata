@@ -14,7 +14,7 @@ interface HomePageProps {
   onAddToCart: (productId: string, quantity: number) => void;
   onUpdateQuantity: (productId: string, quantity: number) => void;
   onRemoveItem: (productId: string) => void;
-  onApplyDiscount: (discountCode: string) => void;
+  onApplyDiscount: (discountCode: string) => Promise<{ success: boolean; message: string; }>;
   onClearCart: () => void;
   isLoading?: boolean;
 }

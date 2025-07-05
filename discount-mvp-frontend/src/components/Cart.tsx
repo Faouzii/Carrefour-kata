@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { Card, Button, Form, Badge, Alert } from 'react-bootstrap';
+import { Button, Form, Alert } from 'react-bootstrap';
 import { Cart as CartType, CartItem } from '../types';
 
 interface CartProps {
   cart: CartType;
   onUpdateQuantity: (productId: string, quantity: number) => void;
   onRemoveItem: (productId: string) => void;
-  onApplyDiscount: (discountCode: string) => void;
+  onApplyDiscount: (discountCode: string) => Promise<{ success: boolean; message: string; }>;
   onClearCart: () => void;
   isLoading?: boolean;
 }
@@ -21,15 +21,19 @@ const Cart: React.FC<CartProps> = ({
 }) => {
   const [discountCode, setDiscountCode] = useState('');
   const [showDiscountForm, setShowDiscountForm] = useState(false);
+  const [discountError, setDiscountError] = useState<string | null>(null);
 
-
-
-  const handleApplyDiscount = (e: React.FormEvent) => {
+  const handleApplyDiscount = async (e: React.FormEvent) => {
     e.preventDefault();
     if (discountCode.trim()) {
-      onApplyDiscount(discountCode.trim());
-      setDiscountCode('');
-      setShowDiscountForm(false);
+      const result = await onApplyDiscount(discountCode.trim());
+      if (result.success) {
+        setDiscountCode('');
+        setShowDiscountForm(false);
+        setDiscountError(null);
+      } else {
+        setDiscountError(result.message);
+      }
     }
   };
 
@@ -143,7 +147,7 @@ const Cart: React.FC<CartProps> = ({
                       type="text"
                       placeholder="Enter discount code"
                       value={discountCode}
-                      onChange={(e) => setDiscountCode(e.target.value)}
+                      onChange={(e) => { setDiscountCode(e.target.value); setDiscountError(null); }}
                       className="py-3 border-2"
                       style={{ borderRadius: '12px', fontSize: '1rem', backgroundColor: 'rgba(255, 255, 255, 0.9)' }}
                     />
@@ -158,6 +162,12 @@ const Cart: React.FC<CartProps> = ({
                       Apply
                     </Button>
                   </div>
+                  {discountError && (
+                    <Alert variant="danger" className="mt-2 py-2" style={{ fontSize: '0.95rem', backgroundColor: 'rgba(220, 53, 69, 0.8)', border: '1px solid rgba(220, 53, 69, 0.3)', color: 'white' }}>
+                      <i className="bi bi-exclamation-triangle me-2"></i>
+                      {discountError}
+                    </Alert>
+                  )}
                 </Form>
               )}
             </div>
