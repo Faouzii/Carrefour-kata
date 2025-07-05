@@ -62,7 +62,10 @@ function App() {
 
   const renderPage = () => {
     switch (currentPage) {
+      case 'about':
+        return <AboutPage />;
       case 'home':
+      default:
         return (
           <HomePage
             products={products}
@@ -77,21 +80,6 @@ function App() {
             isLoading={cartLoading}
           />
         );
-      case 'about':
-        return <AboutPage />;
-      default:
-        return <HomePage
-          products={products}
-          cart={cart}
-          isCartOpen={isCartOpen}
-          onToggleCart={() => setIsCartOpen(!isCartOpen)}
-          onAddToCart={handleAddToCart}
-          onUpdateQuantity={updateQuantity}
-          onRemoveItem={removeItem}
-          onApplyDiscount={applyDiscount}
-          onClearCart={handleClearCart}
-          isLoading={cartLoading}
-        />;
     }
   };
 
