@@ -2,6 +2,7 @@ package com.carrefour.kata.discountmvp.application;
 
 import com.carrefour.kata.discountmvp.domain.*;
 import com.carrefour.kata.discountmvp.domain.discount.DiscountCalculator;
+import com.carrefour.kata.discountmvp.domain.exception.*;
 import com.carrefour.kata.discountmvp.domain.port.CartRepository;
 import com.carrefour.kata.discountmvp.domain.port.DiscountCodeRepository;
 import com.carrefour.kata.discountmvp.domain.port.ProductRepository;
@@ -25,8 +26,14 @@ public class CartService {
 
     public Cart addItem(String cartId, String productId, int quantity) {
         log.info("Adding {} units of product {} to cart {}", quantity, productId, cartId);
+        
+        if (quantity <= 0) {
+            throw new InvalidQuantityException(quantity);
+        }
+        
         var cart = cartRepository.findById(cartId).orElseGet(() -> new Cart(cartId, new ArrayList<>(), null));
-        var product = productRepository.findById(productId).orElseThrow();
+        var product = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductNotFoundException(productId));
         var items = new ArrayList<>(cart.items());
         var existing = items.stream().filter(i -> i.product().id().equals(productId)).findFirst();
         if (existing.isPresent()) {
@@ -43,17 +50,19 @@ public class CartService {
 
     public Cart applyDiscountCode(String cartId, String code) {
         log.info("Applying discount code {} to cart {}", code, cartId);
-        var cart = cartRepository.findById(cartId).orElseThrow();
-        var discountCode = discountCodeRepository.findByCode(code).orElseThrow();
+        var cart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new CartNotFoundException(cartId));
+        var discountCode = discountCodeRepository.findByCode(code)
+                .orElseThrow(() -> new DiscountCodeNotFoundException(code));
         if (discountCode.getExpirationDate().isBefore(LocalDate.now())) {
             log.warn("Attempted to use expired discount code {} for cart {}", code, cartId);
-            throw new IllegalArgumentException("Discount code expired");
+            throw new DiscountCodeExpiredException(code);
         }
         var applicable = cart.items().stream()
                 .anyMatch(item -> discountCode.getEligibleProductIds().contains(item.product().id()));
         if (!applicable) {
             log.warn("Discount code {} not applicable to any product in cart {}", code, cartId);
-            throw new IllegalArgumentException("Discount code not applicable to any product in cart");
+            throw new DiscountCodeNotApplicableException(code);
         }
         log.info("Successfully applied discount code {} to cart {}", code, cartId);
         var updated = new Cart(cart.id(), cart.items(), discountCode);
@@ -61,11 +70,13 @@ public class CartService {
     }
 
     public Cart getCart(String cartId) {
-        return cartRepository.findById(cartId).orElseThrow();
+        return cartRepository.findById(cartId)
+                .orElseThrow(() -> new CartNotFoundException(cartId));
     }
 
     public BigDecimal calculateTotal(String cartId) {
-        var cart = cartRepository.findById(cartId).orElseThrow();
+        var cart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new CartNotFoundException(cartId));
         var total = BigDecimal.ZERO;
         for (var item : cart.items()) {
             var itemTotal = item.product().price().multiply(BigDecimal.valueOf(item.quantity()));
@@ -75,7 +86,7 @@ public class CartService {
                 var calculator = discountCalculators.stream()
                         .filter(c -> c.supports(discountCode))
                         .findFirst()
-                        .orElseThrow();
+                        .orElseThrow(() -> new NoDiscountCalculatorException(discountCode.getType()));
                 var discount = calculator.calculateDiscount(item, discountCode).multiply(BigDecimal.valueOf(item.quantity()));
                 itemTotal = itemTotal.subtract(discount);
             }
@@ -92,7 +103,8 @@ public class CartService {
     }
 
     public Cart removeItem(String cartId, String productId) {
-        var cart = cartRepository.findById(cartId).orElseThrow();
+        var cart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new CartNotFoundException(cartId));
         var items = cart.items().stream()
                 .filter(item -> !item.product().id().equals(productId))
                 .collect(Collectors.toList());

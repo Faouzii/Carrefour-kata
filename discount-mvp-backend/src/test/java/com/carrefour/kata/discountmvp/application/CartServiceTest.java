@@ -4,6 +4,7 @@ import com.carrefour.kata.discountmvp.domain.*;
 import com.carrefour.kata.discountmvp.domain.discount.DiscountCalculator;
 import com.carrefour.kata.discountmvp.domain.discount.PercentageDiscountCalculator;
 import com.carrefour.kata.discountmvp.domain.discount.FixedAmountDiscountCalculator;
+import com.carrefour.kata.discountmvp.domain.exception.*;
 import com.carrefour.kata.discountmvp.domain.port.CartRepository;
 import com.carrefour.kata.discountmvp.domain.port.DiscountCodeRepository;
 import com.carrefour.kata.discountmvp.domain.port.ProductRepository;
@@ -66,7 +67,7 @@ class CartServiceTest {
         Cart cart = new Cart("cart1", List.of(new CartItem(apple, 2)), null);
         when(cartRepository.findById("cart1")).thenReturn(Optional.of(cart));
         when(discountCodeRepository.findByCode("EXPIRED")).thenReturn(Optional.of(expired));
-        assertThrows(IllegalArgumentException.class, () -> cartService.applyDiscountCode("cart1", "EXPIRED"));
+        assertThrows(DiscountCodeExpiredException.class, () -> cartService.applyDiscountCode("cart1", "EXPIRED"));
     }
 
     @Test
@@ -74,7 +75,7 @@ class CartServiceTest {
         Cart cart = new Cart("cart1", List.of(new CartItem(apple, 2)), null);
         when(cartRepository.findById("cart1")).thenReturn(Optional.of(cart));
         when(discountCodeRepository.findByCode("NA")).thenReturn(Optional.of(notApplicable));
-        assertThrows(IllegalArgumentException.class, () -> cartService.applyDiscountCode("cart1", "NA"));
+        assertThrows(DiscountCodeNotApplicableException.class, () -> cartService.applyDiscountCode("cart1", "NA"));
     }
 
     @Test
@@ -92,5 +93,32 @@ class CartServiceTest {
         when(cartRepository.findById("cart1")).thenReturn(Optional.of(cart));
         BigDecimal total = cartService.calculateTotal("cart1");
         assertEquals(BigDecimal.valueOf(2.00).setScale(2), total.setScale(2));
+    }
+
+    @Test
+    void addItem_shouldThrowIfInvalidQuantity() {
+        assertThrows(InvalidQuantityException.class, () -> cartService.addItem("cart1", "1", 0));
+        assertThrows(InvalidQuantityException.class, () -> cartService.addItem("cart1", "1", -1));
+    }
+
+    @Test
+    void addItem_shouldThrowIfProductNotFound() {
+        when(cartRepository.findById("cart1")).thenReturn(Optional.empty());
+        when(productRepository.findById("999")).thenReturn(Optional.empty());
+        assertThrows(ProductNotFoundException.class, () -> cartService.addItem("cart1", "999", 1));
+    }
+
+    @Test
+    void applyDiscountCode_shouldThrowIfCartNotFound() {
+        when(cartRepository.findById("nonexistent")).thenReturn(Optional.empty());
+        assertThrows(CartNotFoundException.class, () -> cartService.applyDiscountCode("nonexistent", "PERC10"));
+    }
+
+    @Test
+    void applyDiscountCode_shouldThrowIfDiscountCodeNotFound() {
+        Cart cart = new Cart("cart1", List.of(new CartItem(apple, 2)), null);
+        when(cartRepository.findById("cart1")).thenReturn(Optional.of(cart));
+        when(discountCodeRepository.findByCode("INVALID")).thenReturn(Optional.empty());
+        assertThrows(DiscountCodeNotFoundException.class, () -> cartService.applyDiscountCode("cart1", "INVALID"));
     }
 } 
