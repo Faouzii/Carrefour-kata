@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, Button, Form, Badge, Alert } from 'react-bootstrap';
 import { Cart as CartType, CartItem } from '../types';
 
