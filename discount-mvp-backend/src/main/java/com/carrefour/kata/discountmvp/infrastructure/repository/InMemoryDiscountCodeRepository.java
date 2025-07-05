@@ -8,8 +8,10 @@ import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 @Repository
+@ConditionalOnProperty(name = "app.database.type", havingValue = "memory", matchIfMissing = true)
 public class InMemoryDiscountCodeRepository implements DiscountCodeRepository {
     private final Map<String, DiscountCode> codes = new HashMap<>();
 

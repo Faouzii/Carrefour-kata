@@ -5,11 +5,13 @@ import com.carrefour.kata.discountmvp.domain.ProductDescriptionService;
 import com.carrefour.kata.discountmvp.domain.port.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 import java.math.BigDecimal;
 import java.util.*;
 
 @Repository
+@ConditionalOnProperty(name = "app.database.type", havingValue = "memory", matchIfMissing = true)
 public class InMemoryProductRepository implements ProductRepository {
     private final ProductDescriptionService descriptionService;
     private final Map<String, Product> products = new HashMap<>();

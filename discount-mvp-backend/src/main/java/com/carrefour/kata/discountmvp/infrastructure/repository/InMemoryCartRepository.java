@@ -5,8 +5,10 @@ import com.carrefour.kata.discountmvp.domain.port.CartRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 @Repository
+@ConditionalOnProperty(name = "app.database.type", havingValue = "memory", matchIfMissing = true)
 public class InMemoryCartRepository implements CartRepository {
     private final Map<String, Cart> carts = new HashMap<>();
 
