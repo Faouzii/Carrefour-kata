@@ -5,29 +5,26 @@ import com.carrefour.kata.discountmvp.domain.discount.DiscountCalculator;
 import com.carrefour.kata.discountmvp.domain.port.CartRepository;
 import com.carrefour.kata.discountmvp.domain.port.DiscountCodeRepository;
 import com.carrefour.kata.discountmvp.domain.port.ProductRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Service
+@RequiredArgsConstructor
+@Slf4j
 public class CartService {
     private final CartRepository cartRepository;
     private final ProductRepository productRepository;
     private final DiscountCodeRepository discountCodeRepository;
     private final List<DiscountCalculator> discountCalculators;
 
-    public CartService(CartRepository cartRepository,
-                      ProductRepository productRepository,
-                      DiscountCodeRepository discountCodeRepository,
-                      List<DiscountCalculator> discountCalculators) {
-        this.cartRepository = cartRepository;
-        this.productRepository = productRepository;
-        this.discountCodeRepository = discountCodeRepository;
-        this.discountCalculators = discountCalculators;
-    }
-
     public Cart addItem(String cartId, String productId, int quantity) {
+        log.info("Adding {} units of product {} to cart {}", quantity, productId, cartId);
         Cart cart = cartRepository.findById(cartId).orElseGet(() -> new Cart(cartId, new ArrayList<>(), null));
         Product product = productRepository.findById(productId).orElseThrow();
         List<CartItem> items = new ArrayList<>(cart.items());
@@ -35,24 +32,30 @@ public class CartService {
         if (existing.isPresent()) {
             items.remove(existing.get());
             items.add(new CartItem(product, existing.get().quantity() + quantity));
+            log.debug("Updated existing item quantity for product {} in cart {}", productId, cartId);
         } else {
             items.add(new CartItem(product, quantity));
+            log.debug("Added new item for product {} to cart {}", productId, cartId);
         }
         Cart updated = new Cart(cart.id(), items, cart.getAppliedDiscountCode().orElse(null));
         return cartRepository.save(updated);
     }
 
     public Cart applyDiscountCode(String cartId, String code) {
+        log.info("Applying discount code {} to cart {}", code, cartId);
         Cart cart = cartRepository.findById(cartId).orElseThrow();
         DiscountCode discountCode = discountCodeRepository.findByCode(code).orElseThrow();
         if (discountCode.getExpirationDate().isBefore(LocalDate.now())) {
+            log.warn("Attempted to use expired discount code {} for cart {}", code, cartId);
             throw new IllegalArgumentException("Discount code expired");
         }
         boolean applicable = cart.items().stream()
-                .anyMatch(item -> discountCode.getApplicableProductIds().contains(item.product().id()));
+                .anyMatch(item -> discountCode.getEligibleProductIds().contains(item.product().id()));
         if (!applicable) {
+            log.warn("Discount code {} not applicable to any product in cart {}", code, cartId);
             throw new IllegalArgumentException("Discount code not applicable to any product in cart");
         }
+        log.info("Successfully applied discount code {} to cart {}", code, cartId);
         Cart updated = new Cart(cart.id(), cart.items(), discountCode);
         return cartRepository.save(updated);
     }
@@ -67,7 +70,7 @@ public class CartService {
         for (CartItem item : cart.items()) {
             BigDecimal itemTotal = item.product().price().multiply(BigDecimal.valueOf(item.quantity()));
             if (cart.getAppliedDiscountCode().isPresent() &&
-                cart.getAppliedDiscountCode().get().getApplicableProductIds().contains(item.product().id())) {
+                cart.getAppliedDiscountCode().get().getEligibleProductIds().contains(item.product().id())) {
                 DiscountCode discountCode = cart.getAppliedDiscountCode().get();
                 DiscountCalculator calculator = discountCalculators.stream()
                         .filter(c -> c.supports(discountCode))

@@ -2,6 +2,7 @@ package com.carrefour.kata.discountmvp.infrastructure.web;
 
 import com.carrefour.kata.discountmvp.domain.Product;
 import com.carrefour.kata.discountmvp.domain.port.ProductRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,12 +13,9 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/products")
+@RequiredArgsConstructor
 public class ProductController {
     private final ProductRepository productRepository;
-
-    public ProductController(ProductRepository productRepository) {
-        this.productRepository = productRepository;
-    }
 
     @GetMapping
     public ResponseEntity<List<ProductDto>> getAllProducts() {

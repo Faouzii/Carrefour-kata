@@ -10,6 +10,6 @@ public class DiscountCode {
     String code;
     DiscountType type;
     BigDecimal value;
-    Set<String> applicableProductIds;
+    Set<String> eligibleProductIds;
     LocalDate expirationDate;
 } 
