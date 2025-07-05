@@ -17,14 +17,8 @@ import java.util.List;
 @Configuration
 public class AppConfig implements WebMvcConfigurer {
     
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/api/**")
-                .allowedOrigins("http://localhost:3000")
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("*")
-                .allowCredentials(true);
-    }
+    // CORS configuration removed - using frontend proxy for development
+    // For production, configure CORS or use reverse proxy
 
     @Bean
     public DiscountCalculator percentageDiscountCalculator() {
