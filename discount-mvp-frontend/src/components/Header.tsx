@@ -1,6 +1,7 @@
 import React from 'react';
 import { Container, Row, Col, Nav } from 'react-bootstrap';
 import { Page } from '../hooks/useNavigation';
+import './Header.css';
 
 interface HeaderProps {
   cartItemCount: number;
@@ -26,7 +27,6 @@ const Header: React.FC<HeaderProps> = ({
                   src="/carrefour_logo.png" 
                   alt="Carrefour Logo" 
                   className="me-3"
-                  style={{ height: '60px', width: 'auto' }}
                 />
                 CARREFOUR
               </div>

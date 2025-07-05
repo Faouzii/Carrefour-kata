@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Form, Alert } from 'react-bootstrap';
 import { Cart as CartType, CartItem } from '../types';
+import './Cart.css';
 
 interface CartProps {
   cart: CartType;
@@ -46,27 +47,27 @@ const Cart: React.FC<CartProps> = ({
   };
 
     return (
-    <div className="cart-container" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <div className="cart-container">
       {cart.items.length === 0 ? (
-        <div className="text-center py-5 flex-grow-1 d-flex align-items-center justify-content-center">
+        <div className="cart-empty-container">
           <div>
-            <div className="bg-light rounded-circle p-4 mb-3" style={{ width: '80px', height: '80px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div className="cart-empty-icon">
               <i className="bi bi-cart-x fs-2 text-muted"></i>
             </div>
-            <h6 className="text-muted mb-2">Your cart is empty</h6>
-            <p className="text-muted small">Add some products to get started!</p>
+            <h6 className="cart-empty-title">Your cart is empty</h6>
+            <p className="cart-empty-text">Add some products to get started!</p>
           </div>
         </div>
       ) : (
         <>
           {/* Scrollable Cart Items */}
-          <div className="cart-items-scrollable" style={{ flex: 1, overflowY: 'auto', padding: '1rem', paddingBottom: '0', maxHeight: 'calc(100vh - 400px)' }}>
+          <div className="cart-items-scrollable">
             {cart.items.map((item) => (
-              <div key={item.productId} className="cart-item p-3 border-bottom mb-3" style={{ backgroundColor: 'rgba(255, 255, 255, 0.15)', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.3)', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)' }}>
+              <div key={item.productId} className="cart-item">
                 <div className="d-flex justify-content-between align-items-start">
                   <div className="flex-grow-1 me-3">
-                    <h6 className="mb-2 fw-semibold text-white">{item.product.name}</h6>
-                    <p className="text-white-50 small mb-3" style={{ lineHeight: '1.4' }}>{item.product.description}</p>
+                    <h6 className="cart-item-title">{item.product.name}</h6>
+                    <p className="cart-item-description">{item.product.description}</p>
                     <div className="d-flex align-items-center justify-content-between">
                       <div className="d-flex align-items-center gap-3">
                         <Form.Label className="mb-0 fw-semibold small text-white">Qty:</Form.Label>
@@ -76,23 +77,14 @@ const Cart: React.FC<CartProps> = ({
                           max="99"
                           value={item.quantity}
                           onChange={(e) => handleQuantityChange(item, parseInt(e.target.value) || 0)}
-                          style={{ 
-                            width: '80px', 
-                            height: '40px',
-                            fontSize: '1rem',
-                            fontWeight: '600',
-                            textAlign: 'center',
-                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                            border: '2px solid rgba(255, 255, 255, 0.3)'
-                          }}
-                          className="border-2"
+                          className="cart-item-quantity-input border-2"
                         />
                       </div>
                       <div className="text-end">
-                        <div className="text-white fw-bold fs-5">
+                        <div className="cart-item-price">
                           €{(item.product.price * item.quantity).toFixed(2)}
                         </div>
-                        <div className="text-white-50 small">
+                        <div className="cart-item-price-per-unit">
                           €{item.product.price.toFixed(2)} each
                         </div>
                       </div>
@@ -103,8 +95,7 @@ const Cart: React.FC<CartProps> = ({
                     size="sm"
                     onClick={() => onRemoveItem(item.productId)}
                     disabled={isLoading}
-                    className="border-2"
-                    style={{ borderRadius: '8px', padding: '0.5rem 0.75rem' }}
+                    className="cart-item-remove-btn border-2"
                   >
                     <i className="bi bi-trash"></i>
                   </Button>
@@ -114,11 +105,11 @@ const Cart: React.FC<CartProps> = ({
           </div>
 
           {/* Fixed Bottom Section */}
-          <div className="cart-bottom-fixed" style={{ padding: '1rem', borderTop: '1px solid rgba(255, 255, 255, 0.2)', backgroundColor: 'rgba(255, 255, 255, 0.05)', height: '350px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <div className="cart-bottom-fixed">
             {/* Discount Section */}
             <div>
               {cart.appliedDiscountCode && (
-                <Alert className="py-3 border-0 mb-3" style={{ borderRadius: '12px', backgroundColor: 'rgba(255, 255, 255, 0.15)', color: 'white', border: '1px solid rgba(255, 255, 255, 0.3)' }}>
+                <Alert className="cart-discount-alert">
                   <div className="d-flex align-items-center">
                     <i className="bi bi-check-circle-fill me-2 text-white fs-5"></i>
                     <div>
@@ -133,8 +124,7 @@ const Cart: React.FC<CartProps> = ({
                 variant="outline-light"
                 size="lg"
                 onClick={() => setShowDiscountForm(!showDiscountForm)}
-                className="w-100 py-3 fw-semibold mb-3"
-                style={{ borderRadius: '12px', borderWidth: '2px' }}
+                className="cart-discount-button"
               >
                 <i className="bi bi-tag me-2"></i>
                 Apply Discount Code
@@ -148,22 +138,20 @@ const Cart: React.FC<CartProps> = ({
                       placeholder="Enter discount code"
                       value={discountCode}
                       onChange={(e) => { setDiscountCode(e.target.value); setDiscountError(null); }}
-                      className="py-3 border-2"
-                      style={{ borderRadius: '12px', fontSize: '1rem', backgroundColor: 'rgba(255, 255, 255, 0.9)' }}
+                      className="cart-discount-input border-2"
                     />
                     <Button 
                       type="submit" 
                       variant="light" 
                       size="lg" 
                       disabled={isLoading}
-                      className="py-3 px-4 fw-semibold"
-                      style={{ borderRadius: '12px' }}
+                      className="cart-discount-apply-btn"
                     >
                       Apply
                     </Button>
                   </div>
                   {discountError && (
-                    <Alert variant="danger" className="mt-2 py-2" style={{ fontSize: '0.95rem', backgroundColor: 'rgba(220, 53, 69, 0.8)', border: '1px solid rgba(220, 53, 69, 0.3)', color: 'white' }}>
+                    <Alert variant="danger" className="cart-error-alert">
                       <i className="bi bi-exclamation-triangle me-2"></i>
                       {discountError}
                     </Alert>
@@ -173,8 +161,8 @@ const Cart: React.FC<CartProps> = ({
             </div>
 
             {/* Summary */}
-            <div className="p-3" style={{ backgroundColor: 'rgba(255, 255, 255, 0.15)', borderRadius: '12px', border: '1px solid rgba(255, 255, 255, 0.3)', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)' }}>
-              <h6 className="fw-semibold mb-3 text-white">Order Summary</h6>
+            <div className="cart-summary">
+              <h6 className="cart-summary-title">Order Summary</h6>
               <div className="d-flex justify-content-between mb-2">
                 <span className="text-white-50">Subtotal:</span>
                 <span className="fw-semibold text-white">€{cart.totalAmount.toFixed(2)}</span>
@@ -185,14 +173,14 @@ const Cart: React.FC<CartProps> = ({
                   <span className="fw-semibold text-white">-€{cart.discountAmount.toFixed(2)}</span>
                 </div>
               )}
-              <div className="d-flex justify-content-between fw-bold fs-4 pt-2 border-top border-white-25">
+              <div className="d-flex justify-content-between fw-bold cart-summary-total">
                 <span className="text-white">Total:</span>
                 <span className="text-warning">€{cart.finalAmount.toFixed(2)}</span>
               </div>
             </div>
 
             {/* Actions */}
-            <div className="d-flex gap-3">
+            <div className="cart-actions">
               <Button
                 variant="outline-light"
                 onClick={() => {
@@ -200,8 +188,7 @@ const Cart: React.FC<CartProps> = ({
                   setShowDiscountForm(false);
                 }}
                 disabled={isLoading}
-                className="flex-grow-1 py-3 fw-semibold"
-                style={{ borderRadius: '12px', borderWidth: '2px' }}
+                className="cart-action-btn cart-action-btn-outline"
               >
                 <i className="bi bi-trash me-2"></i>
                 Clear Cart
@@ -209,8 +196,7 @@ const Cart: React.FC<CartProps> = ({
               <Button
                 variant="warning"
                 disabled={isLoading || cart.items.length === 0}
-                className="flex-grow-1 py-3 fw-semibold"
-                style={{ borderRadius: '12px' }}
+                className="cart-action-btn"
               >
                 <i className="bi bi-credit-card me-2"></i>
                 Checkout

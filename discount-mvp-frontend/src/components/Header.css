@@ -1,0 +1,57 @@
+/* Header Component Styles */
+.carrefour-header {
+  background: linear-gradient(135deg, #e31837 0%, #c41230 100%);
+  color: white;
+  padding: 1rem 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.carrefour-logo {
+  display: flex;
+  align-items: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+}
+
+.carrefour-logo img {
+  height: 45px;
+  width: auto;
+}
+
+.carrefour-slogan {
+  font-size: 0.875rem;
+  opacity: 0.9;
+  font-style: italic;
+}
+
+.cart-nav-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.cart-nav-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+  color: white;
+  transform: translateY(-1px);
+}
+
+.cart-nav-badge {
+  background: #ffc107;
+  color: #000;
+  border-radius: 50%;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: bold;
+  margin-left: 0.5rem;
+  min-width: 1.5rem;
+  display: inline-block;
+  text-align: center;
+} 
