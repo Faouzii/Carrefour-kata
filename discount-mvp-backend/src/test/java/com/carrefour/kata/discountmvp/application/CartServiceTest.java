@@ -25,8 +25,8 @@ class CartServiceTest {
     private List<DiscountCalculator> discountCalculators;
     private CartService cartService;
 
-    private final Product apple = new Product("1", "Apple", BigDecimal.valueOf(1.00));
-    private final Product banana = new Product("2", "Banana", BigDecimal.valueOf(0.80));
+    private final Product apple = new Product("1", "Apple", BigDecimal.valueOf(1.00), "Fresh Apple product");
+    private final Product banana = new Product("2", "Banana", BigDecimal.valueOf(0.80), "Fresh Banana product");
     private final DiscountCode perc10 = new DiscountCode("PERC10", DiscountType.PERCENTAGE, BigDecimal.valueOf(10), Set.of("1", "2"), LocalDate.now().plusDays(10));
     private final DiscountCode expired = new DiscountCode("EXPIRED", DiscountType.PERCENTAGE, BigDecimal.valueOf(10), Set.of("1"), LocalDate.now().minusDays(1));
     private final DiscountCode notApplicable = new DiscountCode("NA", DiscountType.PERCENTAGE, BigDecimal.valueOf(10), Set.of("3"), LocalDate.now().plusDays(10));

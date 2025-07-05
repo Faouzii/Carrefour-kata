@@ -24,7 +24,7 @@ public record CartDto(
                                 item.product().id(),
                                 item.product().name(),
                                 item.product().price(),
-                                "Product description"
+                                item.product().description()
                         )
                 ))
                 .collect(Collectors.toList());

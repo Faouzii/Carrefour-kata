@@ -27,29 +27,12 @@ public class ProductController {
     }
 
     private ProductDto toDto(Product product) {
-        var description = getProductDescription(product.name());
         return new ProductDto(
                 product.id(),
                 product.name(),
                 product.price(),
-                description
+                product.description()
         );
-    }
-
-    private String getProductDescription(String productName) {
-        
-        var lowerName = productName.toLowerCase();
-        if (lowerName.contains("organic") || lowerName.contains("bio")) {
-            return "Organic Carrefour Bio product, sustainably sourced and certified organic.";
-        } else if (lowerName.contains("fresh") || lowerName.contains("fruit") || lowerName.contains("vegetable")) {
-            return "Fresh Carrefour product, carefully selected for quality and taste.";
-        } else if (lowerName.contains("premium") || lowerName.contains("gourmet")) {
-            return "Premium Carrefour selection, offering exceptional quality and flavor.";
-        } else if (lowerName.contains("local") || lowerName.contains("regional")) {
-            return "Local Carrefour product, supporting regional producers and sustainability.";
-        } else {
-            return "Quality Carrefour product with sustainable sourcing and excellent value.";
-        }
     }
 
     public record ProductDto(String id, String name, java.math.BigDecimal price, String description) {}
