@@ -1,7 +1,7 @@
 # Read Me First
 The following was discovered as part of building this project:
 
-* The original package name 'com.carrefour.kata.discount-mvp' is invalid and this project uses 'com.carrefour.kata.discount_mvp' instead.
+* The original package name 'com.carrefour.kata.discount-mvp' is invalid and this project uses 'com.carrefour.kata.discountmvp' instead.
 
 # Getting Started
 
