@@ -1,10 +1,10 @@
 .product-card {
   height: 100%;
-  border: 1px solid #e0e0e0;
+  border: 2px solid #445b8f2a;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
-  background-color: white;
+  background-color: #7892ad22 !important;
 }
 
 .product-card:hover {
