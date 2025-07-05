@@ -101,10 +101,33 @@ public class CartService {
     }
 
     public Cart updateItem(String cartId, String productId, int quantity) {
+        log.info("Updating quantity of product {} to {} in cart {}", productId, quantity, cartId);
+        
         if (quantity <= 0) {
             return removeItem(cartId, productId);
         }
-        return addItem(cartId, productId, quantity);
+        
+        var cart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new CartNotFoundException(cartId));
+        var product = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductNotFoundException(productId));
+        
+        var items = new ArrayList<>(cart.items());
+        var existing = items.stream().filter(i -> i.product().id().equals(productId)).findFirst();
+        
+        if (existing.isPresent()) {
+            // Replace the existing item with new quantity
+            items.remove(existing.get());
+            items.add(new CartItem(product, quantity));
+            log.debug("Updated quantity for product {} to {} in cart {}", productId, quantity, cartId);
+        } else {
+            // Add new item if it doesn't exist
+            items.add(new CartItem(product, quantity));
+            log.debug("Added new item for product {} with quantity {} to cart {}", productId, quantity, cartId);
+        }
+        
+        var updated = new Cart(cart.id(), items, cart.getAppliedDiscountCode().orElse(null));
+        return cartRepository.save(updated);
     }
 
     public Cart removeItem(String cartId, String productId) {

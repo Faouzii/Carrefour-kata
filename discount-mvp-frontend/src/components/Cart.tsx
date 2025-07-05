@@ -46,6 +46,18 @@ const Cart: React.FC<CartProps> = ({
     }
   };
 
+  const handleIncrementQuantity = (item: CartItem) => {
+    onUpdateQuantity(item.productId, item.quantity + 1);
+  };
+
+  const handleDecrementQuantity = (item: CartItem) => {
+    if (item.quantity > 1) {
+      onUpdateQuantity(item.productId, item.quantity - 1);
+    } else {
+      onRemoveItem(item.productId);
+    }
+  };
+
     return (
     <div className="cart-container">
       {cart.items.length === 0 ? (
@@ -71,14 +83,27 @@ const Cart: React.FC<CartProps> = ({
                     <div className="d-flex align-items-center justify-content-between">
                       <div className="d-flex align-items-center gap-3">
                         <Form.Label className="mb-0 fw-semibold small text-white">Qty:</Form.Label>
-                        <Form.Control
-                          type="number"
-                          min="1"
-                          max="99"
-                          value={item.quantity}
-                          onChange={(e) => handleQuantityChange(item, parseInt(e.target.value) || 0)}
-                          className="cart-item-quantity-input border-2"
-                        />
+                        <div className="quantity-controls">
+                          <Button
+                            variant="outline-light"
+                            size="sm"
+                            onClick={() => handleDecrementQuantity(item)}
+                            disabled={isLoading}
+                            className="quantity-btn quantity-btn-minus"
+                          >
+                            <i className="bi bi-dash"></i>
+                          </Button>
+                          <span className="quantity-display">{item.quantity}</span>
+                          <Button
+                            variant="outline-light"
+                            size="sm"
+                            onClick={() => handleIncrementQuantity(item)}
+                            disabled={isLoading}
+                            className="quantity-btn quantity-btn-plus"
+                          >
+                            <i className="bi bi-plus"></i>
+                          </Button>
+                        </div>
                       </div>
                       <div className="text-end">
                         <div className="cart-item-price">
