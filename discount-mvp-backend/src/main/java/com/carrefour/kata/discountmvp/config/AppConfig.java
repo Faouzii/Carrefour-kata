@@ -9,16 +9,12 @@ import com.carrefour.kata.discountmvp.domain.port.DiscountCodeRepository;
 import com.carrefour.kata.discountmvp.domain.port.ProductRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
 
 import java.util.List;
 
 @Configuration
-public class AppConfig implements WebMvcConfigurer {
-    
-    // CORS configuration removed - using frontend proxy for development
-    // For production, configure CORS or use reverse proxy
+public class AppConfig {
 
     @Bean
     public DiscountCalculator percentageDiscountCalculator() {

@@ -52,6 +52,9 @@ public record CartDto(
                 discountAmount = totalAmount.subtract(originalTotal);
                 finalAmount = originalTotal;
             } catch (Exception e) {
+                // If calculation fails, keep original amounts
+                discountAmount = BigDecimal.ZERO;
+                finalAmount = totalAmount;
             }
         }
         

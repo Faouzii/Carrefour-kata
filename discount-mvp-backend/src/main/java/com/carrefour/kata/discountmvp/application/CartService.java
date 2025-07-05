@@ -12,7 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -78,17 +79,21 @@ public class CartService {
         var cart = cartRepository.findById(cartId)
                 .orElseThrow(() -> new CartNotFoundException(cartId));
         var total = BigDecimal.ZERO;
+        var discountCodeOpt = cart.getAppliedDiscountCode();
+        
         for (var item : cart.items()) {
             var itemTotal = item.product().price().multiply(BigDecimal.valueOf(item.quantity()));
-            if (cart.getAppliedDiscountCode().isPresent() &&
-                cart.getAppliedDiscountCode().get().getEligibleProductIds().contains(item.product().id())) {
-                var discountCode = cart.getAppliedDiscountCode().get();
-                var calculator = discountCalculators.stream()
-                        .filter(c -> c.supports(discountCode))
-                        .findFirst()
-                        .orElseThrow(() -> new NoDiscountCalculatorException(discountCode.getType()));
-                var discount = calculator.calculateDiscount(item, discountCode).multiply(BigDecimal.valueOf(item.quantity()));
-                itemTotal = itemTotal.subtract(discount);
+            
+            if (discountCodeOpt.isPresent()) {
+                var discountCode = discountCodeOpt.get();
+                if (discountCode.getEligibleProductIds().contains(item.product().id())) {
+                    var calculator = discountCalculators.stream()
+                            .filter(c -> c.supports(discountCode))
+                            .findFirst()
+                            .orElseThrow(() -> new NoDiscountCalculatorException(discountCode.getType()));
+                    var discount = calculator.calculateDiscount(item, discountCode).multiply(BigDecimal.valueOf(item.quantity()));
+                    itemTotal = itemTotal.subtract(discount);
+                }
             }
             total = total.add(itemTotal);
         }
