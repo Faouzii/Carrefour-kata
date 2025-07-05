@@ -65,6 +65,15 @@ When using JPA, the H2 console is available at: `http://localhost:8080/h2-consol
 - Username: `sa`
 - Password: `password`
 
+## API Documentation
+
+Interactive API documentation is available via Swagger UI:
+
+- [Swagger UI](http://localhost:8080/swagger-ui.html)
+- [OpenAPI JSON](http://localhost:8080/api-docs)
+
+You can use Swagger UI to explore and test all endpoints directly from your browser.
+
 ## API Endpoints
 
 ### Products
