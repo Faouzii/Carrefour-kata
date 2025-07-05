@@ -8,8 +8,8 @@ import HomePage from './pages/HomePage';
 import AboutPage from './pages/AboutPage';
 import LoadingSpinner from './components/LoadingSpinner';
 import ErrorDisplay from './components/ErrorDisplay';
-import { useCart } from './hooks/useCart';
 import { useProducts } from './hooks/useProducts';
+import { useCartWithToast } from './hooks/useCartWithToast';
 import { useToast } from './hooks/useToast';
 import { useNavigation } from './hooks/useNavigation';
 
@@ -27,8 +27,8 @@ function App() {
     clearCart, 
     loadCart, 
     getCartItemCount 
-  } = useCart();
-  const { toast, showToast, hideToast } = useToast();
+  } = useCartWithToast();
+  const { toast, hideToast } = useToast();
   const { currentPage, navigateTo } = useNavigation();
 
   useEffect(() => {
@@ -36,29 +36,13 @@ function App() {
       await Promise.all([loadProducts(), loadCart()]);
     };
     loadInitialData();
-  }, [loadProducts, loadCart]);
+  }, []); // Only run once on mount
 
   const handleAddToCart = async (productId: string, quantity: number) => {
     const result = await addToCart(productId, quantity);
     if (result.success) {
       setIsCartOpen(true);
     }
-    showToast(result.message, result.success ? 'success' : 'danger');
-  };
-
-  const handleUpdateQuantity = async (productId: string, quantity: number) => {
-    const result = await updateQuantity(productId, quantity);
-    showToast(result.message, result.success ? 'success' : 'danger');
-  };
-
-  const handleRemoveItem = async (productId: string) => {
-    const result = await removeItem(productId);
-    showToast(result.message, result.success ? 'success' : 'danger');
-  };
-
-  const handleApplyDiscount = async (discountCode: string) => {
-    const result = await applyDiscount(discountCode);
-    showToast(result.message, result.success ? 'success' : 'danger');
   };
 
   const handleClearCart = async () => {
@@ -66,7 +50,6 @@ function App() {
     if (result.success) {
       setIsCartOpen(false);
     }
-    showToast(result.message, result.success ? 'success' : 'danger');
   };
 
   if (productsLoading || cartLoading) {
@@ -87,9 +70,9 @@ function App() {
             isCartOpen={isCartOpen}
             onToggleCart={() => setIsCartOpen(!isCartOpen)}
             onAddToCart={handleAddToCart}
-            onUpdateQuantity={handleUpdateQuantity}
-            onRemoveItem={handleRemoveItem}
-            onApplyDiscount={handleApplyDiscount}
+            onUpdateQuantity={updateQuantity}
+            onRemoveItem={removeItem}
+            onApplyDiscount={applyDiscount}
             onClearCart={handleClearCart}
             isLoading={cartLoading}
           />
@@ -103,9 +86,9 @@ function App() {
           isCartOpen={isCartOpen}
           onToggleCart={() => setIsCartOpen(!isCartOpen)}
           onAddToCart={handleAddToCart}
-          onUpdateQuantity={handleUpdateQuantity}
-          onRemoveItem={handleRemoveItem}
-          onApplyDiscount={handleApplyDiscount}
+          onUpdateQuantity={updateQuantity}
+          onRemoveItem={removeItem}
+          onApplyDiscount={applyDiscount}
           onClearCart={handleClearCart}
           isLoading={cartLoading}
         />;
