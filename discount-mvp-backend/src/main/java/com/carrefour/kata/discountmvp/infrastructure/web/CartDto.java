@@ -16,7 +16,7 @@ public record CartDto(
         BigDecimal finalAmount
 ) {
     public static CartDto from(Cart cart, CartService cartService) {
-        List<CartItemDto> items = cart.items().stream()
+        var items = cart.items().stream()
                 .map(item -> new CartItemDto(
                         item.product().id(),
                         item.quantity(),
@@ -29,18 +29,18 @@ public record CartDto(
                 ))
                 .collect(Collectors.toList());
         
-        String appliedDiscountCode = cart.getAppliedDiscountCode().map(d -> d.getCode()).orElse(null);
+        var appliedDiscountCode = cart.getAppliedDiscountCode().map(d -> d.getCode()).orElse(null);
         
-        BigDecimal totalAmount = cart.items().stream()
+        var totalAmount = cart.items().stream()
                 .map(item -> item.product().price().multiply(BigDecimal.valueOf(item.quantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         
-        BigDecimal discountAmount = BigDecimal.ZERO;
-        BigDecimal finalAmount = totalAmount;
+        var discountAmount = BigDecimal.ZERO;
+        var finalAmount = totalAmount;
         
         if (cart.getAppliedDiscountCode().isPresent()) {
             try {
-                BigDecimal originalTotal = cartService.calculateTotal(cart.id());
+                var originalTotal = cartService.calculateTotal(cart.id());
                 discountAmount = totalAmount.subtract(originalTotal);
                 finalAmount = originalTotal;
             } catch (Exception e) {

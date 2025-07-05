@@ -25,10 +25,10 @@ public class CartService {
 
     public Cart addItem(String cartId, String productId, int quantity) {
         log.info("Adding {} units of product {} to cart {}", quantity, productId, cartId);
-        Cart cart = cartRepository.findById(cartId).orElseGet(() -> new Cart(cartId, new ArrayList<>(), null));
-        Product product = productRepository.findById(productId).orElseThrow();
-        List<CartItem> items = new ArrayList<>(cart.items());
-        Optional<CartItem> existing = items.stream().filter(i -> i.product().id().equals(productId)).findFirst();
+        var cart = cartRepository.findById(cartId).orElseGet(() -> new Cart(cartId, new ArrayList<>(), null));
+        var product = productRepository.findById(productId).orElseThrow();
+        var items = new ArrayList<>(cart.items());
+        var existing = items.stream().filter(i -> i.product().id().equals(productId)).findFirst();
         if (existing.isPresent()) {
             items.remove(existing.get());
             items.add(new CartItem(product, existing.get().quantity() + quantity));
@@ -37,26 +37,26 @@ public class CartService {
             items.add(new CartItem(product, quantity));
             log.debug("Added new item for product {} to cart {}", productId, cartId);
         }
-        Cart updated = new Cart(cart.id(), items, cart.getAppliedDiscountCode().orElse(null));
+        var updated = new Cart(cart.id(), items, cart.getAppliedDiscountCode().orElse(null));
         return cartRepository.save(updated);
     }
 
     public Cart applyDiscountCode(String cartId, String code) {
         log.info("Applying discount code {} to cart {}", code, cartId);
-        Cart cart = cartRepository.findById(cartId).orElseThrow();
-        DiscountCode discountCode = discountCodeRepository.findByCode(code).orElseThrow();
+        var cart = cartRepository.findById(cartId).orElseThrow();
+        var discountCode = discountCodeRepository.findByCode(code).orElseThrow();
         if (discountCode.getExpirationDate().isBefore(LocalDate.now())) {
             log.warn("Attempted to use expired discount code {} for cart {}", code, cartId);
             throw new IllegalArgumentException("Discount code expired");
         }
-        boolean applicable = cart.items().stream()
+        var applicable = cart.items().stream()
                 .anyMatch(item -> discountCode.getEligibleProductIds().contains(item.product().id()));
         if (!applicable) {
             log.warn("Discount code {} not applicable to any product in cart {}", code, cartId);
             throw new IllegalArgumentException("Discount code not applicable to any product in cart");
         }
         log.info("Successfully applied discount code {} to cart {}", code, cartId);
-        Cart updated = new Cart(cart.id(), cart.items(), discountCode);
+        var updated = new Cart(cart.id(), cart.items(), discountCode);
         return cartRepository.save(updated);
     }
 
@@ -65,18 +65,18 @@ public class CartService {
     }
 
     public BigDecimal calculateTotal(String cartId) {
-        Cart cart = cartRepository.findById(cartId).orElseThrow();
-        BigDecimal total = BigDecimal.ZERO;
-        for (CartItem item : cart.items()) {
-            BigDecimal itemTotal = item.product().price().multiply(BigDecimal.valueOf(item.quantity()));
+        var cart = cartRepository.findById(cartId).orElseThrow();
+        var total = BigDecimal.ZERO;
+        for (var item : cart.items()) {
+            var itemTotal = item.product().price().multiply(BigDecimal.valueOf(item.quantity()));
             if (cart.getAppliedDiscountCode().isPresent() &&
                 cart.getAppliedDiscountCode().get().getEligibleProductIds().contains(item.product().id())) {
-                DiscountCode discountCode = cart.getAppliedDiscountCode().get();
-                DiscountCalculator calculator = discountCalculators.stream()
+                var discountCode = cart.getAppliedDiscountCode().get();
+                var calculator = discountCalculators.stream()
                         .filter(c -> c.supports(discountCode))
                         .findFirst()
                         .orElseThrow();
-                BigDecimal discount = calculator.calculateDiscount(item, discountCode).multiply(BigDecimal.valueOf(item.quantity()));
+                var discount = calculator.calculateDiscount(item, discountCode).multiply(BigDecimal.valueOf(item.quantity()));
                 itemTotal = itemTotal.subtract(discount);
             }
             total = total.add(itemTotal);
@@ -92,16 +92,16 @@ public class CartService {
     }
 
     public Cart removeItem(String cartId, String productId) {
-        Cart cart = cartRepository.findById(cartId).orElseThrow();
-        List<CartItem> items = cart.items().stream()
+        var cart = cartRepository.findById(cartId).orElseThrow();
+        var items = cart.items().stream()
                 .filter(item -> !item.product().id().equals(productId))
                 .collect(Collectors.toList());
-        Cart updatedCart = new Cart(cart.id(), items, cart.getAppliedDiscountCode().orElse(null));
+        var updatedCart = new Cart(cart.id(), items, cart.getAppliedDiscountCode().orElse(null));
         return cartRepository.save(updatedCart);
     }
 
     public Cart clearCart(String cartId) {
-        Cart emptyCart = new Cart(cartId, new ArrayList<>(), null);
+        var emptyCart = new Cart(cartId, new ArrayList<>(), null);
         return cartRepository.save(emptyCart);
     }
 } 

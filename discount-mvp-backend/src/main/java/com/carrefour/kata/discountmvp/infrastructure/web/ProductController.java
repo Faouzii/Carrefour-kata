@@ -19,15 +19,15 @@ public class ProductController {
 
     @GetMapping
     public ResponseEntity<List<ProductDto>> getAllProducts() {
-        List<Product> products = productRepository.findAll();
-        List<ProductDto> productDtos = products.stream()
+        var products = productRepository.findAll();
+        var productDtos = products.stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(productDtos);
     }
 
     private ProductDto toDto(Product product) {
-        String description = getProductDescription(product.name());
+        var description = getProductDescription(product.name());
         return new ProductDto(
                 product.id(),
                 product.name(),
@@ -38,7 +38,7 @@ public class ProductController {
 
     private String getProductDescription(String productName) {
         
-        String lowerName = productName.toLowerCase();
+        var lowerName = productName.toLowerCase();
         if (lowerName.contains("organic") || lowerName.contains("bio")) {
             return "Organic Carrefour Bio product, sustainably sourced and certified organic.";
         } else if (lowerName.contains("fresh") || lowerName.contains("fruit") || lowerName.contains("vegetable")) {
