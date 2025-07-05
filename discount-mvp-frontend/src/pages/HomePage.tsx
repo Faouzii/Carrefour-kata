@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import ProductCard from '../components/ProductCard';
 import Cart from '../components/Cart';
@@ -31,13 +31,6 @@ const HomePage: React.FC<HomePageProps> = ({
   onClearCart,
   isLoading = false
 }) => {
-  const handleAddToCart = async (productId: string, quantity: number) => {
-    await onAddToCart(productId, quantity);
-  };
-
-  const handleClearCart = async () => {
-    await onClearCart();
-  };
 
   return (
     <Container fluid className="main-container">
@@ -57,7 +50,7 @@ const HomePage: React.FC<HomePageProps> = ({
               <Col key={product.id}>
                 <ProductCard
                   product={product}
-                  onAddToCart={handleAddToCart}
+                  onAddToCart={onAddToCart}
                   isLoading={isLoading}
                 />
               </Col>
@@ -87,7 +80,8 @@ const HomePage: React.FC<HomePageProps> = ({
               onUpdateQuantity={onUpdateQuantity}
               onRemoveItem={onRemoveItem}
               onApplyDiscount={onApplyDiscount}
-              onClearCart={handleClearCart}
+              onClearCart={onClearCart}
+              isLoading={isLoading}
             />
         </div>
       </div>

@@ -13,7 +13,11 @@ interface ToastNotificationProps {
 
 const ToastNotification: React.FC<ToastNotificationProps> = ({ toast, onClose }) => {
   return (
-    <ToastContainer position="bottom-start" className="p-3">
+    <ToastContainer
+      position="bottom-start"
+      className="p-3"
+      style={{ position: 'fixed', zIndex: 9999, left: 0, right: 'unset', bottom: 0 }}
+    >
       <Toast
         show={toast.show}
         onClose={onClose}

@@ -17,6 +17,7 @@ function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   
   const { products, isLoading: productsLoading, error: productsError, loadProducts } = useProducts();
+  const { toast, hideToast, showToast } = useToast();
   const { 
     cart, 
     isLoading: cartLoading, 
@@ -27,8 +28,7 @@ function App() {
     clearCart, 
     loadCart, 
     getCartItemCount 
-  } = useCartWithToast();
-  const { toast, hideToast } = useToast();
+  } = useCartWithToast({ showToast });
   const { currentPage, navigateTo } = useNavigation();
 
   useEffect(() => {

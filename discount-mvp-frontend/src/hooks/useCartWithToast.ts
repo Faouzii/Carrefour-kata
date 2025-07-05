@@ -1,10 +1,14 @@
 import { useCallback } from 'react';
 import { useCart } from './useCart';
-import { useToast } from './useToast';
+import { ToastVariant } from './useToast';
 
-export const useCartWithToast = () => {
+interface UseCartWithToastOptions {
+  showToast: (message: string, variant: ToastVariant) => void;
+}
+
+export const useCartWithToast = (options: UseCartWithToastOptions) => {
   const cart = useCart();
-  const { showToast } = useToast();
+  const { showToast } = options;
 
   const addToCartWithToast = useCallback(async (productId: string, quantity: number) => {
     const result = await cart.addToCart(productId, quantity);
