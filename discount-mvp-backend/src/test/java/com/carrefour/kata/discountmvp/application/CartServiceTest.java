@@ -121,4 +121,59 @@ class CartServiceTest {
         when(discountCodeRepository.findByCode("INVALID")).thenReturn(Optional.empty());
         assertThrows(DiscountCodeNotFoundException.class, () -> cartService.applyDiscountCode("cart1", "INVALID"));
     }
+
+    @Test
+    void updateItem_shouldRemoveItemWhenQuantityIsZero() {
+        Cart cart = new Cart("cart1", List.of(new CartItem(apple, 2)), null);
+        when(cartRepository.findById("cart1")).thenReturn(Optional.of(cart));
+        when(cartRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        
+        Cart result = cartService.updateItem("cart1", "1", 0);
+        
+        assertTrue(result.items().isEmpty());
+    }
+
+    @Test
+    void updateItem_shouldRemoveItemWhenQuantityIsNegative() {
+        Cart cart = new Cart("cart1", List.of(new CartItem(apple, 2)), null);
+        when(cartRepository.findById("cart1")).thenReturn(Optional.of(cart));
+        when(cartRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        
+        Cart result = cartService.updateItem("cart1", "1", -1);
+        
+        assertTrue(result.items().isEmpty());
+    }
+
+    @Test
+    void calculateTotal_shouldHandleEmptyCart() {
+        Cart emptyCart = new Cart("cart1", List.of(), null);
+        when(cartRepository.findById("cart1")).thenReturn(Optional.of(emptyCart));
+        
+        BigDecimal total = cartService.calculateTotal("cart1");
+        
+        assertEquals(BigDecimal.ZERO, total);
+    }
+
+    @Test
+    void calculateTotal_shouldHandleCartWithNoDiscount() {
+        Cart cart = new Cart("cart1", List.of(new CartItem(apple, 3)), null);
+        when(cartRepository.findById("cart1")).thenReturn(Optional.of(cart));
+        
+        BigDecimal total = cartService.calculateTotal("cart1");
+        
+        assertEquals(BigDecimal.valueOf(3.00), total);
+    }
+
+    @Test
+    void addItem_shouldUpdateExistingItemQuantity() {
+        Cart cart = new Cart("cart1", List.of(new CartItem(apple, 2)), null);
+        when(cartRepository.findById("cart1")).thenReturn(Optional.of(cart));
+        when(productRepository.findById("1")).thenReturn(Optional.of(apple));
+        when(cartRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        
+        Cart result = cartService.addItem("cart1", "1", 3);
+        
+        assertEquals(1, result.items().size());
+        assertEquals(5, result.items().get(0).quantity()); // 2 + 3
+    }
 } 
