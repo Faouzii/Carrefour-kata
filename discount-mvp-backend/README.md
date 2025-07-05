@@ -103,7 +103,7 @@ You can use Swagger UI to explore and test all endpoints directly from your brow
 ## Development
 
 ### Prerequisites
-- Java 17+
+- Java 21+
 - Maven 3.6+
 
 ### Running the Application
